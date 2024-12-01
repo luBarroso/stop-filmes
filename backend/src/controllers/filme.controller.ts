@@ -70,4 +70,25 @@ async function getInfoFilme(request: Request, response: Response) {
   }
 }
 
-export { getRankGenero, getInfoFilme };
+async function getGenresRand(request: Request, response: Response) {
+  const query = `SELECT nome FROM gênero
+                ORDER BY rand() LIMIT 4;`;
+
+  try {
+    connection.query(query, (err, results) => {
+      if (err) {
+        console.error("Error executing query:", err);
+        response.status(500).send("Error fetching data");
+        return;
+      }
+      response.status(201).json(results);
+    });
+  } catch (error) {
+    return response.status(500).json({
+      messageError: "Erro interno no servidor",
+      error: (error as Error).message,
+    });
+  }
+}
+
+export { getRankGenero, getInfoFilme, getGenresRand };

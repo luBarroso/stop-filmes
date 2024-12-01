@@ -44,14 +44,14 @@ export const LetterContainer = styled.div`
 
   color: #7d4f50;
   font-family: Montserrat;
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: 700;
 `;
 
 export const ChosenLetter = styled.span`
   color: #ddbea9;
   font-family: Montserrat;
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: 700;
   background: #7d4f50;
 
@@ -64,4 +64,37 @@ export const ChosenLetter = styled.span`
   border-radius: 50%;
 
   margin-left: auto;
+`;
+
+export const InputGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 40px;
+`;
+
+export const InputContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const Input = styled.input`
+  outline: 0;
+  border: 0;
+  color: #000;
+  font-family: Montserrat;
+  font-weight: 500;
+  padding: 10px;
+  border-radius: 25px;
+  background: #fff;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25) inset;
+`;
+
+export const Label = styled.label`
+  color: #7d4f50;
+  font-family: Montserrat;
+  font-size: 1rem;
+  font-weight: 700;
 `;

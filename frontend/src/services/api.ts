@@ -21,3 +21,22 @@ export const getInfoFilme = async (id: number) => {
     console.error(err);
   }
 };
+
+export const getGenresRand = async () => {
+  try {
+    const response = await api.get(`/filme/rand`);
+    return response;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const getMoviesLetter = async (letter: string, genero: string) => {
+  return `
+  [
+    {
+    'teste',
+    },  
+  ]
+  `;
+};
