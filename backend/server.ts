@@ -15,7 +15,7 @@ app.use(cors());
 app.use("/api", routes);
 
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  res.send("Stop Filmes");
 });
 
 app.listen(port, () => {
