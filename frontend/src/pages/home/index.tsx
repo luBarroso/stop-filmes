@@ -8,7 +8,7 @@ export const Home = () => {
   return (
     <Container>
       <H1>STOP FILMES</H1>
-      <Button value="Começar" onClick={() => navigate("/quiz")} />
+      <Button value="Começar" onClick={() => navigate("/jogo")} />
     </Container>
   );
 };

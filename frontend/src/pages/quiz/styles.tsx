@@ -32,6 +32,8 @@ export const H2 = styled.h2`
   color: #7d4f50;
   font-family: Montserrat;
   font-size: 3rem;
+  padding: 0;
+  margin: 0;
   font-weight: 800;
 `;
 
@@ -80,15 +82,17 @@ export const InputContainer = styled.div`
   justify-content: center;
 `;
 
-export const Input = styled.input`
+export const Input = styled.input<{ $answered: boolean; $correct: boolean }>`
   outline: 0;
   border: 0;
   color: #000;
   font-family: Montserrat;
   font-weight: 500;
-  padding: 10px;
+  padding: 15px;
+  min-width: 200px;
   border-radius: 25px;
-  background: #fff;
+  background: ${(props) =>
+    props.$answered ? (props.$correct ? "#B7B7A4" : "#E5958E") : "#fff"};
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25) inset;
 `;
 

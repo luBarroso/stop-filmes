@@ -4,18 +4,54 @@ const api = axios.create({
   baseURL: "http://localhost:3333/api",
 });
 
-export const getRankGenero = async (id: number) => {
+export const getVerificaFilme = async (genero: string, letra: string) => {
   try {
-    const response = await api.get(`/filme/rank/${id}`);
+    const response = await api.get(`filme/verificacao/${genero}/${letra}`);
     return response;
   } catch (err) {
     console.error(err);
   }
 };
 
-export const getInfoFilme = async (id: number) => {
+export const getAvalFilme = async (id: number) => {
   try {
-    const response = await api.get(`/filme/${id}`);
+    const response = await api.get(`/filme/avaliacao/${id}`);
+    return response;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const getVerificaPessoa = async (funcao: string, letra: string) => {
+  try {
+    const response = await api.get(`/pessoa/verificacao/${funcao}/${letra}`);
+    return response;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const getRankGenero = async (genero: string) => {
+  try {
+    const response = await api.get(`/filme/rank/${genero}`);
+    return response;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const getVotosFilme = async (id: number) => {
+  try {
+    const response = await api.get(`/filme/votos/${id}`);
+    return response;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const getInfoFilme = async (genero: string) => {
+  try {
+    const response = await api.get(`/filme/${genero}`);
     return response;
   } catch (err) {
     console.error(err);
@@ -24,19 +60,9 @@ export const getInfoFilme = async (id: number) => {
 
 export const getGenresRand = async () => {
   try {
-    const response = await api.get(`/filme/rand`);
+    const response = await api.get(`/genero/rand`);
     return response;
   } catch (err) {
     console.error(err);
   }
-};
-
-export const getMoviesLetter = async (letter: string, genero: string) => {
-  return `
-  [
-    {
-    'teste',
-    },  
-  ]
-  `;
 };
