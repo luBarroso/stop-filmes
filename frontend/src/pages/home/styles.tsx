@@ -12,6 +12,9 @@ export const Container = styled.div`
   background-color: #fff;
   color: black;
   background-image: url(${homeBackgroung});
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 `;
 
 export const H1 = styled.h1`

@@ -75,6 +75,7 @@ export const InputGrid = styled.div`
 `;
 
 export const InputContainer = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -100,5 +101,16 @@ export const Label = styled.label`
   color: #7d4f50;
   font-family: Montserrat;
   font-size: 1rem;
+  font-weight: 700;
+`;
+
+export const Pontuacao = styled.p`
+  position: absolute;
+  top: 0;
+  right: -10px;
+  z-index: 10;
+  color: #7d4f50;
+  font-family: Montserrat;
+  font-size: 20px;
   font-weight: 700;
 `;

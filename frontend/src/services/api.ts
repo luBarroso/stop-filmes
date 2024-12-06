@@ -13,7 +13,7 @@ export const getVerificaFilme = async (genero: string, letra: string) => {
   }
 };
 
-export const getAvalFilme = async (id: number) => {
+export const getAvalFilme = async (id: string) => {
   try {
     const response = await api.get(`/filme/avaliacao/${id}`);
     return response;
@@ -40,7 +40,7 @@ export const getRankGenero = async (genero: string) => {
   }
 };
 
-export const getVotosFilme = async (id: number) => {
+export const getVotosFilme = async (id: string) => {
   try {
     const response = await api.get(`/filme/votos/${id}`);
     return response;

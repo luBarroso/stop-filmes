@@ -11,11 +11,14 @@ import {
   Label,
   LetterContainer,
   Main,
+  Pontuacao,
 } from "./styles";
 import {
+  getAvalFilme,
   getGenresRand,
   getVerificaFilme,
   getVerificaPessoa,
+  getVotosFilme,
 } from "../../services/api";
 import { useNavigate } from "react-router-dom";
 
@@ -29,6 +32,7 @@ interface Genero {
 }
 
 interface Filme {
+  id: string;
   titulo: string;
 }
 
@@ -36,12 +40,14 @@ interface AnswerProps {
   value: Filme;
   genre: string;
   correct: boolean;
+  pontuacao: number;
 }
 
 interface AnswerActorProps {
   value: Genero;
   funcao: string;
   correct: boolean;
+  pontuacao: number;
 }
 
 interface ActorFunction {
@@ -55,44 +61,56 @@ export const Quiz = () => {
     {
       value: {
         titulo: "",
+        id: "",
       },
       genre: "",
       correct: false,
+      pontuacao: 0,
     },
     {
       value: {
         titulo: "",
+        id: "",
       },
       genre: "",
       correct: false,
+      pontuacao: 0,
     },
     {
       value: {
         titulo: "",
+        id: "",
       },
       genre: "",
       correct: false,
+      pontuacao: 0,
     },
     {
       value: {
         titulo: "",
+        id: "",
       },
       genre: "",
       correct: false,
+      pontuacao: 0,
     },
     {
       value: {
         titulo: "",
+        id: "",
       },
       genre: "",
       correct: false,
+      pontuacao: 0,
     },
     {
       value: {
         titulo: "",
+        id: "",
       },
       genre: "",
       correct: false,
+      pontuacao: 0,
     },
   ]);
   const [answersActors, setAnswersActors] = useState<AnswerActorProps[]>([
@@ -102,6 +120,7 @@ export const Quiz = () => {
       },
       funcao: "",
       correct: false,
+      pontuacao: 0,
     },
     {
       value: {
@@ -109,6 +128,7 @@ export const Quiz = () => {
       },
       funcao: "",
       correct: false,
+      pontuacao: 0,
     },
     {
       value: {
@@ -116,6 +136,7 @@ export const Quiz = () => {
       },
       funcao: "",
       correct: false,
+      pontuacao: 0,
     },
   ]);
   const [generos, setGeneros] = useState<Genero[]>();
@@ -124,6 +145,7 @@ export const Quiz = () => {
   const [responseTime, setResponseTime] = useState<number | null>(null);
   const funcoes = ["Actor", "Director", "Composer"];
   const [actors, setActors] = useState<ActorFunction[]>([]);
+  const [pontuTotal, setPontuTotal] = useState(0);
 
   const navigate = useNavigate();
 
@@ -190,6 +212,28 @@ export const Quiz = () => {
     }
   };
 
+  const fetchVotosFilme = async (id: string) => {
+    try {
+      const response = await getVotosFilme(id);
+      if (response?.data) {
+        return response.data;
+      }
+    } catch (error) {
+      console.error("Erro ao buscar os votos do filme:", error);
+    }
+  };
+
+  const fetchAvalFilme = async (id: string) => {
+    try {
+      const response = await getAvalFilme(id);
+      if (response?.data) {
+        return response.data;
+      }
+    } catch (error) {
+      console.error("Erro ao buscar a avaliação do filme:", error);
+    }
+  };
+
   useEffect(() => {
     setStartTime(Date.now());
     setLetter(getRandomLetter());
@@ -204,9 +248,11 @@ export const Quiz = () => {
   }, [generos]);
 
   const handleInputChange = (index: number, value: string, genre: string) => {
-    const updatedAnswers = [...answers];
-    updatedAnswers[index].value.titulo = value;
-    updatedAnswers[index].genre = genre;
+    const updatedAnswers = answers.map((answer, idx) =>
+      idx === index
+        ? { ...answer, value: { ...answer.value, titulo: value }, genre }
+        : answer
+    );
     setAnswers(updatedAnswers);
   };
 
@@ -215,49 +261,74 @@ export const Quiz = () => {
     value: string,
     funcao: string
   ) => {
-    const updatedAnswers = [...answersActors];
-    updatedAnswers[index].value.nome = value;
-    updatedAnswers[index].funcao = funcao;
+    const updatedAnswers = answersActors.map((answer, idx) =>
+      idx === index
+        ? { ...answer, value: { ...answer.value, nome: value }, funcao }
+        : answer
+    );
     setAnswersActors(updatedAnswers);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const endTime = Date.now();
     const timeTaken = endTime - startTime;
     setResponseTime(timeTaken);
     console.log("Respostas:", answers);
     console.log(`Tempo de resposta: ${timeTaken / 1000} segundos`);
 
-    for (let i = 0; i < 6; i++) {
-      if (
-        movies[i].filmes.some(
+    const updatedAnswers = await Promise.all(
+      answers.map(async (answer, i) => {
+        const isCorrect = movies[i].filmes.some(
           (filme) =>
-            filme.titulo.toLowerCase() === answers[i].value.titulo.toLowerCase()
-        )
-      ) {
-        console.log(movies[i].genero, "-", answers[i].value.titulo);
-        const updatedAnswers = answers.map((answer, index) =>
-          index === i ? { ...answer, correct: true } : answer
+            filme.titulo.toLowerCase() === answer.value.titulo.toLowerCase()
         );
-        setAnswers(updatedAnswers);
-      }
-    }
 
-    for (let i = 0; i < 3; i++) {
-      if (
-        actors[i].actor.some(
-          (filme) =>
-            filme.nome.toLowerCase() ===
-            answersActors[i].value.nome.toLowerCase()
-        )
-      ) {
-        console.log(actors[i].funcao, "-", answersActors[i].value.nome);
-        const updatedAnswers = answersActors.map((answer, index) =>
-          index === i ? { ...answer, correct: true } : answer
-        );
-        setAnswersActors(updatedAnswers);
+        if (isCorrect) {
+          const filme = movies[i].filmes.find(
+            (filme) =>
+              filme.titulo.toLowerCase() === answer.value.titulo.toLowerCase()
+          );
+          if (filme) {
+            const qtd_votos = await fetchVotosFilme(filme.id);
+            const aval = await fetchAvalFilme(filme.id);
+            console.log(aval);
+            setPontuTotal(
+              (prevValue) =>
+                prevValue + (qtd_votos[0] ? 20 : 10) + (aval[0] ? 5 : 0)
+            );
+            return {
+              ...answer,
+              value: { ...answer.value, id: filme.id },
+              correct: true,
+              pontuacao: qtd_votos[0] ? 20 : 10 + (aval[0] ? 5 : 0),
+            };
+          }
+        }
+        return answer;
+      })
+    );
+
+    setAnswers(updatedAnswers);
+
+    const updatedAnswersActors = answersActors.map((answer, i) => {
+      const isCorrect = actors[i].actor.some(
+        (filme) => filme.nome.toLowerCase() === answer.value.nome.toLowerCase()
+      );
+
+      if (isCorrect) {
+        console.log(actors[i].funcao, "-", answer.value.nome);
+        setPontuTotal((prevValue) => prevValue + 30);
+        return {
+          ...answer,
+          correct: true,
+          pontuacao: 30,
+        };
       }
-    }
+
+      return answer;
+    });
+
+    setAnswersActors(updatedAnswersActors);
   };
 
   return (
@@ -279,6 +350,10 @@ export const Quiz = () => {
                       ? `Filme do gênero "${label.nome}"`
                       : `Filme do gênero desconhecido`}
                   </Label>
+                  {responseTime !== null && (
+                    <Pontuacao>+{answers[index].pontuacao}</Pontuacao>
+                  )}
+
                   <Input
                     placeholder={`Digite o nome do ${
                       label.nome ? label.nome.toLowerCase() : "gênero"
@@ -294,7 +369,13 @@ export const Quiz = () => {
 
                   {responseTime !== null && (
                     <p
-                      style={{ color: "#603e3e", fontWeight: 500, margin: 0 }}
+                      style={{
+                        color: "#603e3e",
+                        fontWeight: 500,
+                        margin: 0,
+                        textDecoration: "underline",
+                        cursor: "pointer",
+                      }}
                       onClick={() => navigate("/info/" + label.nome)}
                     >
                       Ver filmes de {label.nome}
@@ -311,9 +392,12 @@ export const Quiz = () => {
                 <InputContainer key={index}>
                   <Label>
                     {label
-                      ? `Filme do gênero "${label}"`
-                      : `Filme do gênero desconhecido`}
+                      ? `Pessoa da função "${label}"`
+                      : `Pessoa desconhecida`}
                   </Label>
+                  {responseTime !== null && (
+                    <Pontuacao>+{answersActors[index].pontuacao}</Pontuacao>
+                  )}
                   <Input
                     placeholder={`Digite o nome do ${
                       label ? label.toLowerCase() : "gênero"
@@ -335,7 +419,8 @@ export const Quiz = () => {
         )}
         {responseTime !== null && (
           <p style={{ color: "#603e3e", fontWeight: 500, margin: 0 }}>
-            Você levou {responseTime / 1000} segundos para responder.
+            Pontuação Total = {pontuTotal}. Você levou {responseTime / 1000}{" "}
+            segundos para responder!
           </p>
         )}
       </Main>

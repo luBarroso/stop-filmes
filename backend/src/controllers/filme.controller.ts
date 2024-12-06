@@ -1,10 +1,9 @@
 import { Request, Response } from "express";
 import connection from "../../db";
 
-//Consulta 1
 async function getVerificaFilme(request: Request, response: Response) {
   const { genero, letra } = request.params;
-  const query = `SELECT f.titulo FROM filme f
+  const query = `SELECT f.titulo, f.id FROM filme f
                   JOIN filme_genero fg ON (f.id = fg.fk_Filme_id)
                   JOIN gênero g on (fg.fk_Gênero_id = g.id)
                   WHERE g.nome = ? AND
@@ -27,7 +26,6 @@ async function getVerificaFilme(request: Request, response: Response) {
   }
 }
 
-//Consulta 2
 async function getAvalFilme(request: Request, response: Response) {
   const { id } = request.params;
   const query = `SELECT a.avaliacao_IMDb FROM avaliação a
@@ -53,7 +51,6 @@ async function getAvalFilme(request: Request, response: Response) {
   }
 }
 
-//Consulta 3
 async function getVerificaPessoa(request: Request, response: Response) {
   const { funcao, letra } = request.params;
   const query = `SELECT distinct Pessoa.nome FROM Pessoa
@@ -78,7 +75,6 @@ async function getVerificaPessoa(request: Request, response: Response) {
   }
 }
 
-//Consulta 4
 async function getRankGenero(request: Request, response: Response) {
   const { genero } = request.params;
   const query = `SELECT nome, colocacao, avg_nota
@@ -113,7 +109,6 @@ async function getRankGenero(request: Request, response: Response) {
   }
 }
 
-//Consulta 5
 async function getVotosFilme(request: Request, response: Response) {
   const { id } = request.params;
   const query = `select a.qtd_votos from avaliação a
@@ -138,7 +133,6 @@ async function getVotosFilme(request: Request, response: Response) {
   }
 }
 
-//Consulta 6
 async function getInfoFilme(request: Request, response: Response) {
   const { genero } = request.params;
   const query = `SELECT f.poster , titulo,ano_lancamento,arrecadacao, JSON_ARRAYAGG(
